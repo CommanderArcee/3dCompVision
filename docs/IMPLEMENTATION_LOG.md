@@ -17,5 +17,6 @@
 - Added dataset and utility scripts under `scripts/`.
 - Added `docs/RESOURCE_LOG.md` to track datasets, techniques, and references used.
 - Performed syntax validation with `uv run python -m compileall src run_full_pipeline.py scripts`.
+- Patched incremental SfM fallback to preserve pose continuity when `solvePnPRansac` fails.
 
 This log will be appended as implementation progresses.

@@ -36,6 +36,33 @@ This file records every external dataset/reference and every major technique use
 13. BoVW + SVM classification (`sklearn`)
 14. Confusion matrix and classification report
 
+## Implementation Usage Trace
+
+- `src/cvfinal/preprocessing.py`
+  - CLAHE histogram equalization
+  - Canny edge detection
+- `src/cvfinal/segmentation.py`
+  - GrabCut segmentation
+  - Morphological closing
+  - Largest contour mask filtering
+- `src/cvfinal/features.py`
+  - SIFT feature extraction
+  - FLANN matching and Lowe ratio test
+- `src/cvfinal/reconstruction.py`
+  - Essential matrix estimation (RANSAC)
+  - Pose recovery
+  - Triangulation
+  - Incremental PnP-RANSAC
+- `src/cvfinal/optical_flow.py`
+  - Dense Farneback optical flow
+- `src/cvfinal/classification.py`
+  - Bag of Visual Words (KMeans)
+  - SVM classification
+  - Confusion matrix and classification report
+- `src/cvfinal/visualization.py`
+  - PCA point-cloud axis alignment
+  - 3D plotting and GIF generation
+
 ## References (Theory)
 
 1. R. Hartley and A. Zisserman, *Multiple View Geometry in Computer Vision*, 2nd ed., 2004.

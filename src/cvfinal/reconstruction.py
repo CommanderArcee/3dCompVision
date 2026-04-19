@@ -139,6 +139,7 @@ def run_incremental_sfm(
                 flags=cv2.SOLVEPNP_EPNP,
             )
             if not ok:
+                poses.append(poses[-1])
                 continue
 
             R_new, _ = cv2.Rodrigues(rvec)
