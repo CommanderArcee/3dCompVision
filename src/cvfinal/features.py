@@ -35,11 +35,30 @@ def detect_features(gray: np.ndarray, mask: np.ndarray | None = None) -> Feature
     sift = create_sift()
     if mask is not None:
         gray = mask_background(gray, mask)
+        keypoints, descriptors = sift.detectAndCompute(gray, mask)
+    else:
+        keypoints, descriptors = sift.detectAndCompute(gray, None)
 
-    keypoints, descriptors = sift.detectAndCompute(gray, None)
     if descriptors is None:
         descriptors = np.zeros((0, 128), dtype=np.float32)
     return FeaturePack(keypoints=keypoints, descriptors=descriptors)
+
+
+def _points_inside_mask(points: np.ndarray, mask: np.ndarray, margin: int = 3) -> np.ndarray:
+    if len(points) == 0:
+        return np.zeros((0,), dtype=bool)
+    work = mask
+    if margin > 0:
+        kernel = np.ones((3, 3), np.uint8)
+        work = cv2.erode(mask, kernel, iterations=margin)
+    h, w = work.shape[:2]
+    keep = np.zeros((len(points),), dtype=bool)
+    for i, (x, y) in enumerate(points):
+        xi = int(round(x))
+        yi = int(round(y))
+        if 0 <= yi < h and 0 <= xi < w and work[yi, xi] > 0:
+            keep[i] = True
+    return keep
 
 
 def match_descriptors(desc_a: np.ndarray, desc_b: np.ndarray, ratio_test: float = 0.75) -> list[cv2.DMatch]:
@@ -134,6 +153,16 @@ def pairwise_matches(
                 idx_b = idx_b[keep]
                 pts1 = pts1[keep]
                 pts2 = pts2[keep]
+
+        if masks[i] is not None and masks[i + 1] is not None and len(pts1) > 0:
+            inside_a = _points_inside_mask(pts1, masks[i], margin=2)
+            inside_b = _points_inside_mask(pts2, masks[i + 1], margin=2)
+            keep = inside_a & inside_b
+            good = [m for m, k in zip(good, keep) if k]
+            idx_a = idx_a[keep]
+            idx_b = idx_b[keep]
+            pts1 = pts1[keep]
+            pts2 = pts2[keep]
 
         draw_matches(
             grays[i],
