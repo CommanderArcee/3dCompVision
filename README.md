@@ -22,6 +22,7 @@ This repository implements a full classical Computer Vision pipeline aligned wit
 - `scripts/extract_frames.py`: standalone frame extraction utility
 - `scripts/prepare_coil_sequence.py`: generate ordered frame sequence from COIL for reconstruction verification
 - `scripts/generate_report_draft.py`: auto-generate report draft markdown from metrics
+- `scripts/view_ply.py`: view a `.ply` point cloud with matplotlib
 - `src/cvfinal/`: pipeline modules
 - `docs/EXECUTION_PLAN.md`: implementation plan
 - `docs/IMPLEMENTATION_LOG.md`: progress log
@@ -106,4 +107,11 @@ All generated artifacts are written under `data/output/`, including:
 uv run python scripts/generate_report_draft.py \
   --metrics data/output/metrics.json \
   --out docs/PROJECT_REPORT_DRAFT.md
+```
+
+## View a PLY point cloud
+
+```bash
+uv run python scripts/view_ply.py \
+  --ply data/output/reconstruction/sparse_cloud.ply
 ```
