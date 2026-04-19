@@ -95,14 +95,21 @@ def draw_matches(
 
 def pairwise_matches(
     image_paths: list[Path],
-    mask: np.ndarray | None,
+    mask: np.ndarray | list[np.ndarray] | None,
     ratio_test: float,
     out_dir: Path,
 ) -> tuple[list[FeaturePack], list[PairMatches]]:
     features: list[FeaturePack] = []
     grays = [load_gray(p) for p in image_paths]
-    for g in grays:
-        features.append(detect_features(g, mask=mask))
+    masks: list[np.ndarray | None] = [None] * len(grays)
+    if isinstance(mask, list):
+        for i in range(min(len(mask), len(grays))):
+            masks[i] = mask[i]
+    elif mask is not None:
+        masks = [mask] * len(grays)
+
+    for i, g in enumerate(grays):
+        features.append(detect_features(g, mask=masks[i]))
 
     pairs: list[PairMatches] = []
     for i in range(len(grays) - 1):

@@ -61,6 +61,19 @@ uv run python run_full_pipeline.py \
   --reproj-threshold 15
 ```
 
+If the mask cuts small object parts (for example bottle caps), expand the foreground mask:
+
+```bash
+uv run python run_full_pipeline.py \
+  --video data/raw/objectron_sample.MOV \
+  --classification-root data/interim/classification \
+  --interactive-roi \
+  --mask-dilate 4 \
+  --frame-step 8
+```
+
+Note: segmentation masks are generated per frame (not reused from the first frame), which helps keep foreground features on moving/rotating objects.
+
 ## Option B: Run reconstruction verification on COIL sequence
 
 ```bash

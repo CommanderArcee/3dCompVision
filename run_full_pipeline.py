@@ -13,7 +13,7 @@ from cvfinal.io_utils import list_images, load_color, load_gray, reset_dir, save
 from cvfinal.optical_flow import save_dense_optical_flow
 from cvfinal.preprocessing import preprocess_frames
 from cvfinal.reconstruction import run_incremental_sfm
-from cvfinal.segmentation import generate_mask
+from cvfinal.segmentation import generate_masks_for_frames
 from cvfinal.visualization import (
     overlay_points_on_image,
     pca_align,
@@ -38,6 +38,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--svm-test-size", type=float, default=0.3)
     parser.add_argument("--reproj-threshold", type=float, default=15.0)
     parser.add_argument("--disable-mask", action="store_true")
+    parser.add_argument("--mask-dilate", type=int, default=2)
     return parser.parse_args()
 
 
@@ -91,16 +92,16 @@ def main() -> None:
         raise RuntimeError("Need at least 2 processed frames")
 
     print("[Step 2] Generating segmentation mask...")
-    mask_path = seg_dir / "mask.png"
-    mask_debug = seg_dir / "mask_debug.png"
-    mask = generate_mask(
-        first_frame_path=frame_paths[0],
-        out_mask_path=mask_path,
-        out_debug_path=mask_debug,
-        use_interactive_roi=args.interactive_roi,
-    )
+    mask: list | None
     if args.disable_mask:
         mask = None
+    else:
+        mask = generate_masks_for_frames(
+            frame_paths=frame_paths,
+            out_dir=seg_dir,
+            use_interactive_roi=args.interactive_roi,
+            dilate_iter=args.mask_dilate,
+        )
 
     print("[Step 3] Feature extraction and matching...")
     features, pairs = pairwise_matches(proc_paths, mask, cfg.ratio_test, match_dir)
