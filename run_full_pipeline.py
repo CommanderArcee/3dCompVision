@@ -29,7 +29,6 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--frames-dir", type=Path, default=None)
     parser.add_argument("--classification-root", type=Path, default=Path("data/interim/classification"))
     parser.add_argument("--enable-optical-flow", action="store_true")
-    parser.add_argument("--interactive-roi", action="store_true")
     parser.add_argument("--frame-step", type=int, default=15)
     parser.add_argument("--frame-width", type=int, default=800)
     parser.add_argument("--frame-height", type=int, default=600)
@@ -99,7 +98,7 @@ def main() -> None:
         mask = generate_masks_for_frames(
             frame_paths=frame_paths,
             out_dir=seg_dir,
-            use_interactive_roi=args.interactive_roi,
+            use_interactive_roi=False,
             dilate_iter=args.mask_dilate,
         )
 

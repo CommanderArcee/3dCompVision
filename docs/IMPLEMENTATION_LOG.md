@@ -25,5 +25,9 @@
 - Added directory reset safety to avoid mixing artifacts across runs.
 - Added `docs/RUN_RESULTS.md` with reproducible commands and observed outputs.
 - Added `scripts/generate_report_draft.py` and generated `docs/PROJECT_REPORT_DRAFT.md` from pipeline metrics.
+- Refactored Step 3 matching to carry per-frame feature indices for stable 2D-3D track propagation.
+- Rebuilt Step 4/5 incremental SfM to use feature-index tracks, robust triangulation filtering (depth + reprojection), and stronger PnP-RANSAC pose updates.
+- Removed interactive ROI dependency from the default pipeline route and kept automatic per-frame mask generation active.
+- Validated pipeline on `data/raw/your_video.mp4` with improved metrics (`num_points_3d=374`, `mean_reprojection_error=3.21`).
 
 This log will be appended as implementation progresses.

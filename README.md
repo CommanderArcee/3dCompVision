@@ -68,7 +68,6 @@ If the mask cuts small object parts (for example bottle caps), expand the foregr
 uv run python run_full_pipeline.py \
   --video data/raw/objectron_sample.MOV \
   --classification-root data/interim/classification \
-  --interactive-roi \
   --mask-dilate 4 \
   --frame-step 8
 ```

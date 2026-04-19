@@ -20,6 +20,8 @@ class FeaturePack:
 class PairMatches:
     idx_a: int
     idx_b: int
+    feat_idx_a: np.ndarray
+    feat_idx_b: np.ndarray
     points_a: np.ndarray
     points_b: np.ndarray
     good_matches: list[cv2.DMatch]
@@ -116,6 +118,8 @@ def pairwise_matches(
         f1 = features[i]
         f2 = features[i + 1]
         good = match_descriptors(f1.descriptors, f2.descriptors, ratio_test=ratio_test)
+        idx_a = np.asarray([m.queryIdx for m in good], dtype=np.int32) if good else np.zeros((0,), dtype=np.int32)
+        idx_b = np.asarray([m.trainIdx for m in good], dtype=np.int32) if good else np.zeros((0,), dtype=np.int32)
         pts1, pts2 = get_match_points(f1.keypoints, f2.keypoints, good) if good else (
             np.zeros((0, 2), dtype=np.float32),
             np.zeros((0, 2), dtype=np.float32),
@@ -126,6 +130,8 @@ def pairwise_matches(
             if F is not None and inlier_mask is not None:
                 keep = inlier_mask.ravel().astype(bool)
                 good = [m for m, k in zip(good, keep) if k]
+                idx_a = idx_a[keep]
+                idx_b = idx_b[keep]
                 pts1 = pts1[keep]
                 pts2 = pts2[keep]
 
@@ -137,5 +143,5 @@ def pairwise_matches(
             good,
             out_dir / f"matches_{i:04d}_{i+1:04d}.png",
         )
-        pairs.append(PairMatches(i, i + 1, pts1, pts2, good))
+        pairs.append(PairMatches(i, i + 1, idx_a, idx_b, pts1, pts2, good))
     return features, pairs
