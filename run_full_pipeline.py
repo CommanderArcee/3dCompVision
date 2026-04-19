@@ -9,7 +9,7 @@ from cvfinal.classification import run_bovw_svm
 from cvfinal.config import PipelineConfig, ensure_dirs
 from cvfinal.evaluation import save_metrics
 from cvfinal.features import pairwise_matches
-from cvfinal.io_utils import list_images, load_color, load_gray, save_ply
+from cvfinal.io_utils import list_images, load_color, load_gray, reset_dir, save_ply
 from cvfinal.optical_flow import save_dense_optical_flow
 from cvfinal.preprocessing import preprocess_frames
 from cvfinal.reconstruction import run_incremental_sfm
@@ -62,10 +62,12 @@ def main() -> None:
     cls_dir = cfg.output_dir / "classification"
     metrics_path = cfg.output_dir / "metrics.json"
 
-    recon_dir.mkdir(parents=True, exist_ok=True)
+    for d in [proc_dir, overlay_dir, match_dir, flow_dir, seg_dir, recon_dir, cls_dir]:
+        reset_dir(d)
 
     if args.frames_dir is None:
         print("[Step 0] Extracting frames...")
+        reset_dir(frame_dir)
         n_frames = extract_frames(args.video, frame_dir, cfg.frame_step, cfg.frame_resize_w, cfg.frame_resize_h)
         if n_frames < 2:
             raise RuntimeError("Need at least 2 extracted frames for reconstruction")

@@ -22,5 +22,7 @@
 - Verified dataset acquisition end-to-end (`scripts/download_datasets.py`).
 - Verified full pipeline run on Objectron sample video (all stages completed).
 - Verified full pipeline run on COIL ordered sequence (all stages completed after reconstruction robustness patch).
+- Added directory reset safety to avoid mixing artifacts across runs.
+- Added `docs/RUN_RESULTS.md` with reproducible commands and observed outputs.
 
 This log will be appended as implementation progresses.
