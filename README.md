@@ -21,6 +21,7 @@ This repository implements a full classical Computer Vision pipeline aligned wit
 - `scripts/download_datasets.py`: dataset download and preparation (Objectron + COIL-100)
 - `scripts/extract_frames.py`: standalone frame extraction utility
 - `scripts/prepare_coil_sequence.py`: generate ordered frame sequence from COIL for reconstruction verification
+- `scripts/generate_report_draft.py`: auto-generate report draft markdown from metrics
 - `src/cvfinal/`: pipeline modules
 - `docs/EXECUTION_PLAN.md`: implementation plan
 - `docs/IMPLEMENTATION_LOG.md`: progress log
@@ -72,3 +73,11 @@ All generated artifacts are written under `data/output/`, including:
 - `reconstruction/` (`.ply`, plots, GIF, overlay)
 - `classification/` (`classification_report.txt`, confusion matrix)
 - `metrics.json`
+
+## Generate report draft
+
+```bash
+uv run python scripts/generate_report_draft.py \
+  --metrics data/output/metrics.json \
+  --out docs/PROJECT_REPORT_DRAFT.md
+```

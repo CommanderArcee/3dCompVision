@@ -24,5 +24,6 @@
 - Verified full pipeline run on COIL ordered sequence (all stages completed after reconstruction robustness patch).
 - Added directory reset safety to avoid mixing artifacts across runs.
 - Added `docs/RUN_RESULTS.md` with reproducible commands and observed outputs.
+- Added `scripts/generate_report_draft.py` and generated `docs/PROJECT_REPORT_DRAFT.md` from pipeline metrics.
 
 This log will be appended as implementation progresses.
