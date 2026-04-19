@@ -67,3 +67,5 @@ This file records every external dataset/reference and every major technique use
 
 1. R. Hartley and A. Zisserman, *Multiple View Geometry in Computer Vision*, 2nd ed., 2004.
 2. D. A. Forsyth and J. Ponce, *Computer Vision: A Modern Approach*, 2011.
+3. A. Ahmadyan et al., "Objectron: A Large Scale Dataset of Object-Centric Videos in the Wild with Pose Annotations," CVPR, 2021.
+4. S. A. Nene, S. K. Nayar and H. Murase, "Columbia Object Image Library (COIL-100)," Technical Report CUCS-006-96, 1996.

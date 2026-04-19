@@ -42,7 +42,7 @@ uv run python scripts/download_datasets.py --data-root data --coil-classes 1 2 3
 
 ```bash
 uv run python run_full_pipeline.py \
-  --video data/raw/objectron_sample.mp4 \
+  --video data/raw/objectron_sample.MOV \
   --classification-root data/interim/classification \
   --enable-optical-flow
 ```

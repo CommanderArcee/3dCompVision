@@ -70,9 +70,15 @@ def run_incremental_sfm(
             K,
         )
 
-    first = pair_matches[0]
-    if len(first.points_a) < 8:
-        raise RuntimeError("Not enough matches in first pair to estimate essential matrix")
+    first_idx = None
+    for idx, pm in enumerate(pair_matches):
+        if len(pm.points_a) >= 8:
+            first_idx = idx
+            break
+    if first_idx is None:
+        raise RuntimeError("No frame pair has enough matches to estimate essential matrix")
+
+    first = pair_matches[first_idx]
 
     E, inlier_mask = cv2.findEssentialMat(first.points_a, first.points_b, K, method=cv2.RANSAC, prob=0.999, threshold=1.0)
     if E is None:
@@ -80,14 +86,17 @@ def run_incremental_sfm(
 
     _, R1, t1, pose_mask = cv2.recoverPose(E, first.points_a, first.points_b, K)
 
-    poses: list[CameraPose] = [CameraPose(np.eye(3), np.zeros(3)), CameraPose(R1, t1.ravel())]
+    poses: list[CameraPose] = [CameraPose(np.eye(3), np.zeros(3))]
+    for _ in range(first.idx_a - 0):
+        poses.append(poses[-1])
+    poses.append(CameraPose(R1, t1.ravel()))
 
     inliers = (inlier_mask.ravel() > 0) & (pose_mask.ravel() > 0)
     pts0 = first.points_a[inliers]
     pts1 = first.points_b[inliers]
 
-    P0 = projection_matrix(K, poses[0].R, poses[0].t)
-    P1 = projection_matrix(K, poses[1].R, poses[1].t)
+    P0 = projection_matrix(K, poses[first.idx_a].R, poses[first.idx_a].t)
+    P1 = projection_matrix(K, poses[first.idx_b].R, poses[first.idx_b].t)
 
     points3d = triangulate(P0, P1, pts0, pts1)
 
@@ -97,17 +106,17 @@ def run_incremental_sfm(
     for p3d, p2d_0, p2d_1 in zip(points3d, pts0, pts1):
         pid = len(point_ids)
         point_ids.append(pid)
-        observations.append({"point_id": pid, "frame": 0, "xy": p2d_0.tolist()})
-        observations.append({"point_id": pid, "frame": 1, "xy": p2d_1.tolist()})
+        observations.append({"point_id": pid, "frame": first.idx_a, "xy": p2d_0.tolist()})
+        observations.append({"point_id": pid, "frame": first.idx_b, "xy": p2d_1.tolist()})
 
     frame_key_to_point: dict[tuple[int, tuple[int, int]], int] = {}
     for pid, p2d_1 in enumerate(pts1):
-        key = (1, (int(round(p2d_1[0])), int(round(p2d_1[1]))))
+        key = (first.idx_b, (int(round(p2d_1[0])), int(round(p2d_1[1]))))
         frame_key_to_point[key] = pid
 
     all_points = points3d.tolist()
 
-    for i in range(1, len(pair_matches)):
+    for i in range(first_idx + 1, len(pair_matches)):
         pair = pair_matches[i]
         prev_frame = pair.idx_a
         curr_frame = pair.idx_b

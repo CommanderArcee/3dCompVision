@@ -8,14 +8,9 @@ from pathlib import Path
 import requests
 
 
-COIL100_URL = "https://www.cs.columbia.edu/CAVE/databases/pub/coil-100/coil-100.zip"
-
-# Public Objectron video URL patterns vary by mirror. This script tries known candidates.
-OBJECTRON_VIDEO_CANDIDATES = [
-    "https://storage.googleapis.com/objectron/videos/train/chair/batch-1/0.mp4",
-    "https://storage.googleapis.com/objectron/videos/train/cup/batch-1/0.mp4",
-    "https://storage.googleapis.com/objectron/videos/train/camera/batch-1/0.mp4",
-]
+COIL100_URL = "https://www.cs.columbia.edu/CAVE/databases/SLAM_coil-20_coil-100/coil-100/coil-100.zip"
+OBJECTRON_INDEX_URL = "https://raw.githubusercontent.com/google-research-datasets/Objectron/master/index/chair_annotations"
+OBJECTRON_VIDEO_PREFIX = "https://storage.googleapis.com/objectron/videos"
 
 
 def download_file(url: str, out_path: Path, timeout: int = 60) -> bool:
@@ -66,11 +61,22 @@ def prepare_coil_classification(
 
 
 def download_objectron_video(data_root: Path) -> Path:
-    out = data_root / "raw" / "objectron_sample.mp4"
-    for url in OBJECTRON_VIDEO_CANDIDATES:
-        if download_file(url, out):
-            return out
-    raise RuntimeError("Failed to download Objectron sample video from known URLs")
+    out = data_root / "raw" / "objectron_sample.MOV"
+    try:
+        idx_response = requests.get(OBJECTRON_INDEX_URL, timeout=60)
+        idx_response.raise_for_status()
+        first_line = idx_response.text.splitlines()[0].strip()
+    except requests.RequestException as e:
+        raise RuntimeError(f"Failed to fetch Objectron index: {e}") from e
+
+    if not first_line:
+        raise RuntimeError("Objectron index is empty")
+
+    mov_url = f"{OBJECTRON_VIDEO_PREFIX}/{first_line}/video.MOV"
+    ok = download_file(mov_url, out)
+    if not ok:
+        raise RuntimeError(f"Failed to download Objectron sample video from {mov_url}")
+    return out
 
 
 def main() -> None:

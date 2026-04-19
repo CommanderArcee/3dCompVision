@@ -25,7 +25,7 @@ from scripts.extract_frames import extract_frames
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Run full CV final project pipeline")
-    parser.add_argument("--video", type=Path, default=Path("data/raw/objectron_sample.mp4"))
+    parser.add_argument("--video", type=Path, default=Path("data/raw/objectron_sample.MOV"))
     parser.add_argument("--frames-dir", type=Path, default=None)
     parser.add_argument("--classification-root", type=Path, default=Path("data/interim/classification"))
     parser.add_argument("--enable-optical-flow", action="store_true")
