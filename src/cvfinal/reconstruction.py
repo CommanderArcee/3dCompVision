@@ -187,6 +187,7 @@ def run_incremental_sfm(
             observations.append({"point_id": pid, "frame": curr_frame, "xy": p_curr.tolist()})
 
     points_np = np.asarray(all_points, dtype=np.float64)
+    raw_points_np = points_np.copy()
 
     errors = []
     for obs in observations:
@@ -216,7 +217,8 @@ def run_incremental_sfm(
         for pid, errs in point_errs.items():
             if np.mean(errs) > reproj_threshold_px:
                 keep[pid] = False
-        points_np = points_np[keep]
+        filtered_points = points_np[keep]
+        points_np = filtered_points if len(filtered_points) >= 50 else raw_points_np
 
     result = ReconstructionResult(
         points_3d=points_np,

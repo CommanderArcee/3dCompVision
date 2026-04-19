@@ -114,6 +114,14 @@ def pairwise_matches(
             np.zeros((0, 2), dtype=np.float32),
         )
 
+        if len(good) >= 8:
+            F, inlier_mask = cv2.findFundamentalMat(pts1, pts2, cv2.FM_RANSAC, 1.5, 0.99)
+            if F is not None and inlier_mask is not None:
+                keep = inlier_mask.ravel().astype(bool)
+                good = [m for m, k in zip(good, keep) if k]
+                pts1 = pts1[keep]
+                pts2 = pts2[keep]
+
         draw_matches(
             grays[i],
             grays[i + 1],

@@ -36,6 +36,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--ratio-test", type=float, default=0.75)
     parser.add_argument("--kmeans-clusters", type=int, default=50)
     parser.add_argument("--svm-test-size", type=float, default=0.3)
+    parser.add_argument("--reproj-threshold", type=float, default=15.0)
+    parser.add_argument("--disable-mask", action="store_true")
     return parser.parse_args()
 
 
@@ -49,6 +51,7 @@ def main() -> None:
         ratio_test=args.ratio_test,
         kmeans_clusters=args.kmeans_clusters,
         svm_test_size=args.svm_test_size,
+        reproj_threshold_px=args.reproj_threshold,
     )
     ensure_dirs(cfg)
 
@@ -96,6 +99,8 @@ def main() -> None:
         out_debug_path=mask_debug,
         use_interactive_roi=args.interactive_roi,
     )
+    if args.disable_mask:
+        mask = None
 
     print("[Step 3] Feature extraction and matching...")
     features, pairs = pairwise_matches(proc_paths, mask, cfg.ratio_test, match_dir)

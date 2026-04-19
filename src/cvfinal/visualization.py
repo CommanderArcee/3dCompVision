@@ -9,7 +9,7 @@ import numpy as np
 
 
 def pca_align(points_3d: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    if len(points_3d) == 0:
+    if len(points_3d) < 3:
         return points_3d, np.zeros(3), np.eye(3)
 
     mean = points_3d.mean(axis=0)

@@ -49,3 +49,5 @@ Status: success
 - The pipeline now resets intermediate/output directories at each run to avoid cross-run contamination.
 - Objectron reconstruction currently yields sparse points with high reprojection error under the no-calibration assumption (`f = image width`).
 - COIL sequence is included as an additional real dataset verification path and can be reused as a pre-check before custom video runs.
+- For challenging scenes, use `--frame-step 8 --disable-mask` to retain enough correspondences.
+- Reconstruction now preserves raw cloud if strict reprojection filtering would collapse the output to very few points.

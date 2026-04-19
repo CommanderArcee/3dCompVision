@@ -45,7 +45,20 @@ uv run python scripts/download_datasets.py --data-root data --coil-classes 1 2 3
 uv run python run_full_pipeline.py \
   --video data/raw/objectron_sample.MOV \
   --classification-root data/interim/classification \
-  --enable-optical-flow
+  --enable-optical-flow \
+  --frame-step 8 \
+  --reproj-threshold 15
+```
+
+If segmentation is unstable for a scene, disable masking to inspect geometric behavior first:
+
+```bash
+uv run python run_full_pipeline.py \
+  --video data/raw/objectron_sample.MOV \
+  --classification-root data/interim/classification \
+  --disable-mask \
+  --frame-step 8 \
+  --reproj-threshold 15
 ```
 
 ## Option B: Run reconstruction verification on COIL sequence
