@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+
+# Runtime artifacts
+data/output/
+data/processed/
+data/interim/
+data/raw/*.zip
