@@ -1,116 +1,64 @@
 # Multi-Technique 3D Reconstruction from Rotating Video
 
-This repository implements a full classical Computer Vision pipeline aligned with the project plan in `plan.md`.
+A Computer Vision project focused on reconstructing sparse 3D point clouds from rotating video sequences using classical OpenCV-based techniques.
 
-## What is implemented
+## Features
+- SIFT feature extraction and feature matching
+- Camera pose estimation and triangulation
+- Sparse 3D point cloud reconstruction
+- Optical flow visualization
+- Projection overlay validation
+- Object classification using BoVW + SVM
 
-- Frame extraction from video
-- Preprocessing (CLAHE, Canny, overlays)
-- Object mask generation (GrabCut + morphology + contour filtering)
-- SIFT feature extraction and pairwise matching with Lowe ratio test
-- Two-view pose recovery and triangulation
-- Incremental reconstruction using PnP + triangulation
-- Dense optical flow visualization (toggle)
-- PCA alignment of reconstructed point cloud
-- BoVW + SVM object classification with confusion matrix
-- Quantitative output metrics and report-ready artifacts
+## Tech Stack
+Python • OpenCV • NumPy • Matplotlib • Scikit-learn
 
-## Project structure
+## Reconstruction Results
 
-- `run_full_pipeline.py`: master script for full execution
-- `scripts/download_datasets.py`: dataset download and preparation (Objectron + COIL-100)
-- `scripts/extract_frames.py`: standalone frame extraction utility
-- `scripts/prepare_coil_sequence.py`: generate ordered frame sequence from COIL for reconstruction verification
-- `scripts/generate_report_draft.py`: auto-generate report draft markdown from metrics
-- `scripts/view_ply.py`: view a `.ply` point cloud with matplotlib
-- `src/cvfinal/`: pipeline modules
-- `docs/EXECUTION_PLAN.md`: implementation plan
-- `docs/IMPLEMENTATION_LOG.md`: progress log
-- `docs/RESOURCE_LOG.md`: datasets/references/techniques log
+### Rotating 3D Point Cloud
+Visualization of the reconstructed sparse point cloud generated from rotating viewpoints.
 
-## Setup (uv)
+![Rotating Cloud](output/rotating_cloud.gif)
+
+### Sparse Point Cloud Reconstruction
+Generated sparse 3D reconstruction from matched feature correspondences.
+
+![Sparse Cloud](output/sparse_cloud.png)
+
+### Projection Overlay
+Projection overlay used to validate reconstruction accuracy and camera alignment.
+
+![Overlay Projection](output/overlay_projection.png)
+
+## Project Structure
+
+```bash
+.
+├── docs/
+├── output/
+├── scripts/
+├── src/
+├── run_full_pipeline.py
+└── README.md
+```
+
+## Run the Project
+
+### Install Dependencies
 
 ```bash
 uv sync
 ```
 
-## Download and prepare datasets
+### Run Full Pipeline
 
 ```bash
-uv run python scripts/download_datasets.py --data-root data --coil-classes 1 2 3 4
+uv run python run_full_pipeline.py
 ```
 
-## Option A: Run on Objectron sample video
-
-```bash
-uv run python run_full_pipeline.py \
-  --video data/raw/objectron_sample.MOV \
-  --classification-root data/interim/classification \
-  --enable-optical-flow \
-  --frame-step 8 \
-  --reproj-threshold 15
-```
-
-If segmentation is unstable for a scene, disable masking to inspect geometric behavior first:
-
-```bash
-uv run python run_full_pipeline.py \
-  --video data/raw/objectron_sample.MOV \
-  --classification-root data/interim/classification \
-  --disable-mask \
-  --frame-step 8 \
-  --reproj-threshold 15
-```
-
-If the mask cuts small object parts (for example bottle caps), expand the foreground mask:
-
-```bash
-uv run python run_full_pipeline.py \
-  --video data/raw/objectron_sample.MOV \
-  --classification-root data/interim/classification \
-  --mask-dilate 4 \
-  --frame-step 8
-```
-
-Note: segmentation masks are generated per frame (not reused from the first frame), which helps keep foreground features on moving/rotating objects.
-
-## Option B: Run reconstruction verification on COIL sequence
-
-```bash
-uv run python scripts/prepare_coil_sequence.py \
-  --class-dir data/interim/classification/obj1 \
-  --out data/interim/coil_sequence \
-  --step 4
-
-uv run python run_full_pipeline.py \
-  --frames-dir data/interim/coil_sequence \
-  --classification-root data/interim/classification \
-  --enable-optical-flow
-```
-
-## Outputs
-
-All generated artifacts are written under `data/output/`, including:
-
-- `preprocess_overlays/`
-- `segmentation/`
-- `matches/`
-- `optical_flow/` (if enabled)
-- `reconstruction/` (`.ply`, plots, GIF, overlay)
-- `classification/` (`classification_report.txt`, confusion matrix)
-- `metrics.json`
-
-## Generate report draft
-
-```bash
-uv run python scripts/generate_report_draft.py \
-  --metrics data/output/metrics.json \
-  --out docs/PROJECT_REPORT_DRAFT.md
-```
-
-## View a PLY point cloud
-
-```bash
-uv run python scripts/view_ply.py \
-  --ply data/output/reconstruction/sparse_cloud.ply
-```
+## Future Improvements
+- Dense 3D reconstruction
+- Real-time reconstruction support
+- Deep learning-based feature extraction
+- Interactive 3D visualization
+- SLAM integration
